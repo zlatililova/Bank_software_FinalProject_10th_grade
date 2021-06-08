@@ -1,7 +1,7 @@
 struct user_t{
 
     char username[21];
-    char password[21];
+    int hash_pass;
     unsigned int id;
 };
 
