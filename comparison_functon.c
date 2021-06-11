@@ -52,27 +52,28 @@ void append_user(struct user_t *user)
     fclose(fp);
 }
 
-// not working comparison
-void compare(struct user_t *user, char *file, char *object)
+//int compare(struct user_t *user, char *file, char *object){
+int compare(char *file, char *object)
 {
-
     FILE *fp;
-    char buff[255]; //creating char array to store data of file
+    //
+    char buff[25]; //creating char array to store data of file
     fp = fopen(file, "r");
-    //while(fscanf(fp, "%s", buff)!=EOF || fscanf(fp, "%s", buff)!= " "){
     while (fscanf(fp, "%s", buff) != EOF)
     {
         printf("word = %s\n", buff);
-        if (strcmp("Dobri", buff) == 0)
+        if (strcmp(object, buff) == 0)
         {
-            printf("There is somethink");
-            break;
+            printf("There is somethink\n");
+            return 1;
         }
     }
+    printf("There is not anything\n");
     printf("Before close;");
 
     fclose(fp);
     printf("End of FUNCTION");
+    return 0;
 }
 
 int main()
@@ -83,36 +84,20 @@ int main()
     file_check("transactions.txt");
 
     struct user_t first_person;
-    strcpy(first_person.username, "Misho");
-    //printf("name = %s\n, first_person.username);
-
-    /*
-    char * pass = "234234";
-    printf("hash = %s\n", hashing( pass, strlen(pass)));
-   */
+    strcpy(first_person.username, "MAN");
     first_person.hash_pass = 1234;
     first_person.id = 14;
     //printf("name = %d\n", first_person.id);
     append_user(&first_person);
 
     // compare(,user,)
+    struct user_t other_person;
+    strcpy(other_person.username, "MAN");
+    other_person.hash_pass = 4356;
+    other_person.id = 80;
 
-    //working comparison
-    FILE *fp;
-    char buff[255]; //creating char array to store data of file
-    fp = fopen("users.txt", "r");
-    //while(fscanf(fp, "%s", buff)!=EOF || fscanf(fp, "%s", buff)!= " "){
-    while (fscanf(fp, "%s", buff) != EOF)
-    {
-        printf("word = %s\n", buff);
-        if (strcmp("Gancho", buff) == 0)
-        {
-            printf("HERE is equal\n");
-        }
-    }
-
-    printf("End of FUNCTION");
-    fclose(fp);
+    //printf("The value of compare is %d", compare(&other_person,"Misho", "users.txt"))
+    printf("The value of compare is %d", compare("users.txt", other_person.username));
 
     printf("End of ProgrAM");
     return 0;
