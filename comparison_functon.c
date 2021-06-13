@@ -41,7 +41,7 @@ int hashing(char *password, int size_of_pass)
 
     return sum % size_of_pass;
 }
-
+//fix the "users.txt" with lical var(char *file)
 void append_user(struct user_t *user)
 {
     FILE *fp;
