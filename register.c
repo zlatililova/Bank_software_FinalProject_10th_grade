@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 struct user_t{
 
@@ -16,6 +17,49 @@ struct account_t{
     int balance;
     unsigned int id;
 };
+
+char* create_Iban()
+{
+    //printf("function begins\n");
+    srand(time(0));
+   char *arr = malloc(23*sizeof(char));
+
+    char alphabet[26] = {  'A', 'B', 'C', 'D', 'E', 'F', 'G',
+                            'H', 'I', 'J', 'K', 'L', 'M', 'N',
+                            'O', 'P', 'Q', 'R', 'S', 'T', 'U',
+                            'V', 'W', 'X', 'Y', 'Z' };
+    char numbers[10] = {'0','1','2','3','4','5','6','7','8','9'};
+    for (int i = 0; i < 23; i++)
+    {
+        if(i<2 || (i>3 && i<8)){
+           arr[i] = alphabet[rand() % 26];
+        }
+        else{
+            arr[i]  = numbers[rand() % 10];
+        }
+    }
+    arr[22] = '\0';
+
+    return arr;
+
+}
+
+int compare(char *file, char *object){
+    FILE *fp;
+    int i = 0;
+    char buff[25]; //creating char array to store data of file
+    fp = fopen(file, "r");
+
+    while (fscanf(fp,"%s",buff)!= EOF)
+    {
+        if (strncmp(object,buff,strlen(object)-1)==0)
+        {
+            i = 1;
+        }
+    }
+    fclose(fp);
+    return i;
+}
 
 int hashing (char password[]){
     int pass_len = strlen(password);
@@ -60,7 +104,7 @@ int return_last_id(){
     char str[50];
     char *ptr;
 
-   if ((fptr = fopen("C:\\Users\\user\\Desktop\\text.txt","a+")) == NULL){
+   if ((fptr = fopen("C:\\Users\\user\\Desktop\\users.txt","a+")) == NULL){
        printf("Error! opening file");
        exit(1);
    }
@@ -76,17 +120,20 @@ int return_last_id(){
 struct user_t register_user(void){
     struct user_t new_user;
     char password[11];
-    char name[11];
+    char *name = malloc(sizeof(char)*11);
     int is_valid = 0;
+    int second = 1;
 
     printf("Enter a user name between 5 and 10 characters, use only letters and numbers:\n");
     fgets(name, 10, stdin);
     is_valid = validate(name);
+    second = compare("users.txt", name);
 
-    while(is_valid!=1){
+    while(is_valid!=1 || second != 0){
         printf("Invalid data. Enter a user name between 5 and 20 characters, use only letters and numbers:\n");
         fgets(name, 10, stdin);
         is_valid = validate(name);
+        second = compare("users.txt", name);
     }
 
     printf("Enter a password between 5 and 10 characters, use only letters and numbers:\n");
@@ -109,14 +156,34 @@ struct user_t register_user(void){
     new_user.id+=1;
 
     return new_user;
+
 }
 
 void append_user(struct user_t *user){
     FILE *fp;
-    fp = fopen("C:\\Users\\user\\Desktop\\text.txt", "a+");
+    fp = fopen("C:\\Users\\user\\Desktop\\users.txt", "a+");
     fprintf(fp, "%d %s %d %c", user->id, user->username, user->hash_pass, '\n');
 
     fclose(fp);
+
+}
+
+void append_account(struct account_t *acc){
+    FILE *fp;
+    fp = fopen("C:\\Users\\user\\Desktop\\accounts.txt", "a+");
+    fprintf(fp, "%d %s %d %c", acc->id, acc->iban, acc->balance, '\n');
+
+    fclose(fp);
+
+}
+
+struct account_t create_account(struct user_t *user){
+    struct account_t new_acc;
+    new_acc.id = user->id;
+    new_acc.balance = 0;
+    strcpy(new_acc.iban, create_Iban());
+
+    return new_acc;
 
 }
 
@@ -124,6 +191,8 @@ int main(){
 
     struct user_t u = register_user();
     append_user(&u);
+    struct account_t a = create_account(&u);
+    append_account(&a);
 
     return 0;
 }
