@@ -65,6 +65,7 @@ int compare(char *file, char *object)
         if (strcmp(object, buff) == 0)
         {
             printf("There is somethink\n");
+            fclose(fp);
             return 1;
         }
     }
