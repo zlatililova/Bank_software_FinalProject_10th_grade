@@ -49,14 +49,12 @@ int compare(char *file, char *object){
     int i = 0;
     char buff[25]; //creating char array to store data of file
     fp = fopen(file, "r");
-    printf("Start!\n");
 
     while (fscanf(fp,"%s",buff)!= EOF)
     {
         if (strncmp(object,buff,strlen(object)-1)==0)//the object is found
         {
             i = 1;
-            printf("FOUND!\n");
         }
     }
     fclose(fp);
@@ -85,6 +83,9 @@ int flag = 1;
         char s = name[i];
 
         if (s>='a'&&s<='z'){
+            flag = 1;
+        }
+        else if (s>='A'&&s<='Z'){
             flag = 1;
         }
         else if(s>='0'&& s<='9'){
@@ -119,59 +120,48 @@ int return_last_id(){
     return last_id;
 }
 
-struct user_t log_user(/*int type_of_log*/){//0 - log in or 1 - register
+struct user_t log_user(int type_of_log){//0 - log in or 1 - register
     struct user_t new_user;
     char password[11];
     char *name = malloc(sizeof(char)*11);
     int is_valid = 0;
     int second = 1;
-    
-    /*if(type_of_log == 1){
+
+    if(type_of_log == 1){
         second = 1;
     }else{
         second = 0;
-    }*/
-    printf("Log flag = %d\n", second);
-    printf("Enter a user name between 5 and 10 characters, use only letters and numbers:\n");
-    fgets(name, 10, stdin);
-    is_valid = validate(name);
-    /*if(type_of_log == 1){
-       second = compare("users.txt", name); 
-       
-    }*/
-    second = compare("users.txt", name); 
-    printf("second flag = %d\n",second);
-
-    while(is_valid!=1 || second != 0){
-        printf("Log flag\n");
-        printf("Invalid data. Enter a user name between 5 and 20 characters, use only letters and numbers:\n");
-        fgets(name, 10, stdin);
-        
-        is_valid = validate(name);
-        /*if(type_of_log == 1){
-            second = compare("users.txt", name); 
-        }*/
-        second = compare("users.txt", name); 
     }
 
-    printf("Enter a password between 5 and 10 characters, use only letters and numbers:\n");
-    fgets(password, 10, stdin);
-    is_valid = validate(password);
+    while(is_valid!= 1 || second != 0){
+        fgets(name, 10, stdin);
+        printf("Enter a user name between 5 and 10 characters, use only letters and numbers:\n");
+        fgets(name, 10, stdin);
+
+        is_valid = validate(name);
+        if(type_of_log == 1){
+            second = compare("users.txt", name);
+        }
+    }
+
+    is_valid = 0;
 
     while(is_valid!=1){
-        printf("Invalid data. Enter a password between 5 and 10 characters, use only letters and numbers:\n");
-        fgets(name, 10, stdin);
+        printf("Enter a password between 5 and 10 characters, use only letters and numbers:\n");
+        fgets(password, 10, stdin);
+
         is_valid = validate(name);
     }
 
 
-        name[strlen(name)-1]='\0';
+    name[strlen(name)-1]='\0';
 
 
     strcpy(new_user.username, name);
     new_user.hash_pass = hashing(password);
     new_user.id = return_last_id();
     new_user.id+=1;
+    free(name);
 
     return new_user;
 
