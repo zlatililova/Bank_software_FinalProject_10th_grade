@@ -49,12 +49,14 @@ int compare(char *file, char *object){
     int i = 0;
     char buff[25]; //creating char array to store data of file
     fp = fopen(file, "r");
+    printf("Start!\n");
 
     while (fscanf(fp,"%s",buff)!= EOF)
     {
-        if (strncmp(object,buff,strlen(object)-1)==0)
+        if (strncmp(object,buff,strlen(object)-1)==0)//the object is found
         {
             i = 1;
+            printf("FOUND!\n");
         }
     }
     fclose(fp);
@@ -117,23 +119,39 @@ int return_last_id(){
     return last_id;
 }
 
-struct user_t register_user(void){
+struct user_t log_user(/*int type_of_log*/){//0 - log in or 1 - register
     struct user_t new_user;
     char password[11];
     char *name = malloc(sizeof(char)*11);
     int is_valid = 0;
     int second = 1;
-
+    
+    /*if(type_of_log == 1){
+        second = 1;
+    }else{
+        second = 0;
+    }*/
+    printf("Log flag = %d\n", second);
     printf("Enter a user name between 5 and 10 characters, use only letters and numbers:\n");
     fgets(name, 10, stdin);
     is_valid = validate(name);
-    second = compare("users.txt", name);
+    /*if(type_of_log == 1){
+       second = compare("users.txt", name); 
+       
+    }*/
+    second = compare("users.txt", name); 
+    printf("second flag = %d\n",second);
 
     while(is_valid!=1 || second != 0){
+        printf("Log flag\n");
         printf("Invalid data. Enter a user name between 5 and 20 characters, use only letters and numbers:\n");
         fgets(name, 10, stdin);
+        
         is_valid = validate(name);
-        second = compare("users.txt", name);
+        /*if(type_of_log == 1){
+            second = compare("users.txt", name); 
+        }*/
+        second = compare("users.txt", name); 
     }
 
     printf("Enter a password between 5 and 10 characters, use only letters and numbers:\n");
@@ -189,7 +207,7 @@ struct account_t create_account(struct user_t *user){
 
 int main(){
 
-    struct user_t u = register_user();
+    struct user_t u = log_user();
     append_user(&u);
     struct account_t a = create_account(&u);
     append_account(&a);
