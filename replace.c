@@ -1,6 +1,5 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
 
 struct account_t
 {
@@ -10,90 +9,66 @@ struct account_t
     unsigned int id;
 };
 
+struct employee
+{
+    char name[50];
+    char designation[50];
+    int age;
+    float salary
+} employee;
+
 void update(char *file, int id, int sum)
 {
-    int counter = 0;
-    int flag = 0;
-
-    printf("ok\n");
-
     FILE *fp;
-    //
+    FILE *fptmp;
+
     int i;
-    int curr_money;
     char buff[50]; //creating char array to store data of file
     //char *ptr;
     char iban[25];
     int money;
-    char sm = '\0';
 
-    fp = fopen(file, "r+");
+    fp = fopen(file, "r");
+    //see for employee
+    fptmp = fopen("temp_file.txt", "w");
 
+    //why
     fseek(fp, 0, SEEK_SET);
-
+    int flag = 0;
     while (!feof(fp))
     {
+
         fgets(buff, sizeof(buff), fp);
+
         sscanf(buff, "%d %s %d", &i, iban, &money);
-        printf("id = %d\n", i);
-        printf("iban = %s\n", iban);
-        printf("money = %d\n", money);
+
+        if (flag != 1)
+        {
+
+            fprintf(fptmp, "%d %s %d %c", i, iban, money, '\n');
+        }
+        else
+        {
+
+            fprintf(fptmp, "%d %s %d %c", i, iban, sum, '\n');
+            flag = 0;
+        }
 
         if (i + 1 == id)
         {
-            fseek(fp, 25, SEEK_CUR);
-
-            sscanf(buff, "%*d %*s %d", &money);
-
-            //char *point = money;
-            //point = sum;
-
-            fprintf(fp, "%d ", sum);
-
-            //mine
-            /*
-            char money_arr[] = "76";
-            int len = strlen(money_arr);
-
-            printf("money = %s  len = %d\n", money_arr, len);
-
-            for (int f = 0; f < len; f++) {
-                    printf("buff = %s\n", buff);
-                if (buff == '\n' || buff == ' '){
-                    int flag =1;
-                    printf("here is a flag\n");
-                }
-                else
-                {
-                    printf("not here\n");
-                    //printf("fp = %c", fp);
-                }
-                printf("Character we are writing to the File = %c \n", money_arr[f]);
-                fputc (money_arr[f], fp);
-            }
-            if (flag){
-           fputc(' ', fp);
-
-           fputc(' ', fp);
-
-           fputc(' ', fp);
-            fputc('\n', fp);
-
-            }
-*/
-            struct account_t acc = {i, iban, sum};
-            break;
+            flag = 1;
         }
     }
 
     fclose(fp);
-    printf("End of FUNCTION");
+    fclose(fptmp);
+    remove(file);
+    rename("temp_file.txt", file);
 }
 
 int main()
 {
-
-    update("accounts.txt", 3, 540);
+    update("accounts.txt", 4, 8543);
 
     return 0;
 }
