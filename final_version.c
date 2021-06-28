@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+
 struct user_t
 {
 
@@ -64,6 +65,7 @@ int main()
     return 0;
 }
 
+//the main menu to log in a user
 void menu1()
 {
     char choice = '-'; //Избор в menu1()
@@ -118,6 +120,7 @@ void menu1()
     }
 }
 
+//the secondary menu for the main opperations
 void menu2(struct user_t *user)
 {
     char choice2 = '-'; //Избор в menu2()
@@ -125,11 +128,12 @@ void menu2(struct user_t *user)
                    "2-Withdraw\n"
                    "3-Transfer\n"
                    "4-Edit transactions\n"
-                   "0-Logout";
+                   "0-Logout\n";
     struct account_t acc;
 
     while(choice2 != '0')
     {
+        system("cls");
         printf("%s", menu2);
         scanf("%s", &choice2);
         switch (choice2)
@@ -177,6 +181,7 @@ void menu2(struct user_t *user)
         {
             //edit transactions
             check_transactions("transactions.txt");
+            printf("All transactions are made\n");
             break;
         }
 
@@ -191,6 +196,7 @@ void menu2(struct user_t *user)
     }
 }
 
+//function that checks if a certain string can be found in a file
 int compare(char *file, char *object)
 {
     FILE *fp;
@@ -211,6 +217,7 @@ int compare(char *file, char *object)
     return i;
 }
 
+//function that check if the data, entered by a user, is present in the users file
 int is_in_database(char name[], int hashed_password)
 {
 
@@ -241,14 +248,13 @@ int is_in_database(char name[], int hashed_password)
         if(pass_check == 1 && name_check == 0)
         {
             in_database = 1;
-            goto l1;
+            break;
 
         }
 
 
     }
-l1:
-    ;
+
 
     if(in_database == 1)
     {
@@ -260,6 +266,7 @@ l1:
     }
 }
 
+//funtion the generates a random Iban
 char* create_Iban()
 {
     //printf("function begins\n");
@@ -289,7 +296,7 @@ char* create_Iban()
 
 }
 
-
+//algorithm for encrypting the password
 int hashing (char password[])
 {
     int pass_len = strlen(password);
@@ -302,6 +309,7 @@ int hashing (char password[])
     return sum;
 }
 
+//function that checks if the entered data is the needed lenght and consists only of letters and numbers
 int validate(char name[])
 {
     int l = strlen(name);
@@ -338,6 +346,7 @@ int validate(char name[])
     return flag;
 }
 
+//helping function to create an unique id based on the last id, present in the files
 int return_last_id()
 {
     FILE *fptr;
@@ -360,6 +369,7 @@ int return_last_id()
     return last_id;
 }
 
+//main function for logging a user, based on the flag given it either logs or registers the user
 struct user_t log_user(int type_of_log) //0 - log in or 1 - register
 {
     struct user_t new_user;
@@ -415,6 +425,7 @@ struct user_t log_user(int type_of_log) //0 - log in or 1 - register
 
 }
 
+//appends a stucture user_t to the file of users
 void append_user(struct user_t *user)
 {
     FILE *fp;
@@ -425,6 +436,7 @@ void append_user(struct user_t *user)
 
 }
 
+//appends a stucture accounts_t to the file of accounts
 void append_account(struct account_t *acc)
 {
     FILE *fp;
@@ -435,6 +447,7 @@ void append_account(struct account_t *acc)
 
 }
 
+//function to create a new account if the user is registering for the first time
 struct account_t create_account(struct user_t *user)
 {
     struct account_t new_acc;
@@ -445,7 +458,8 @@ struct account_t create_account(struct user_t *user)
     return new_acc;
 
 }
-//CHECK IF FILE IS EMPTY
+
+//function that checks if a file is existing and check if it is empty 
 int file_check(char *file)
 {
     FILE *fp;
@@ -476,7 +490,8 @@ int file_check(char *file)
     }
     fclose(fp);
 }
-//FUNCTION FOR FOR WITHDRAL FROM ACCOUNT
+
+//function to perform the main opperation when withdrawing
 int withdral(int amount, int sum)
 {
     if (amount<sum)
@@ -490,7 +505,8 @@ int withdral(int amount, int sum)
     }
     return amount;
 }
-//FUNCTION FOR FOR DEPOSITION FROM ACCOUNT
+
+//function to perform the main opperation when depositing
 int deposit(int  amount,int deposition)
 {
     if(deposition<0)
@@ -505,7 +521,8 @@ int deposit(int  amount,int deposition)
     }
 
 }
-//FUNCTION FOR CHANGING THE VALUE OF THE MONEY IN AN ACCOUNT
+
+//function to update balance of a certain account in accounts.txt; it uses a temporaty file
 void update(char *file, int id, int sum)
 {
     FILE *fp;
@@ -547,7 +564,8 @@ void update(char *file, int id, int sum)
 
 
 }
-//FINDS STRUCTURE BY USING ID
+
+//finds and returns account based on a given id
 struct account_t find_struct_by_id(char *file, int object)
 {
     FILE *fp;
@@ -574,7 +592,7 @@ struct account_t find_struct_by_id(char *file, int object)
     }
 }
 
-//FINDS STRUCTURE BY USING IBAN
+//finds and returns account based on a given Iban
 struct account_t find_struct(char *file, char *object)
 {
     FILE *fp;
@@ -604,7 +622,7 @@ struct account_t find_struct(char *file, char *object)
     }
 }
 
-//MAKES TRANSACTION BETWEEN TWO ACCOUNTS
+//makes the main operation of a transaction - withdraw form first acc and deposit to the second
 void transaction_func(struct transaction_t transaction)
 {
     struct account_t account_from;
@@ -628,7 +646,8 @@ void transaction_func(struct transaction_t transaction)
 
 
 }
-//HANDLE TRANSACTIONS FROM FILE
+
+//the file handling of transacion - it extracts all the necessary information from the file
 void handle_transactions(char *file)
 {
 
@@ -660,7 +679,8 @@ void handle_transactions(char *file)
     //fclose(fp);
 
 }
-//CHECK IF THERE ARE TRANSACTIONS
+
+//checks if there are any transactions in the file and handles them
 void check_transactions(char *file)
 {
     if (file_check(file) == 0)
@@ -673,7 +693,8 @@ void check_transactions(char *file)
         handle_transactions(file);
     }
 }
-//PUTS NEW TRANSACTION IN THE FILE
+
+//appenrd a new tranfer to the file
 void new_transaction(struct transaction_t transaction)
 {
 
@@ -686,6 +707,7 @@ void new_transaction(struct transaction_t transaction)
 
 }
 
+//gets all the necessary info form the user and creates a tranfer struct
 void  create_transfer(char *file)
 {
     char iban_to [31];
